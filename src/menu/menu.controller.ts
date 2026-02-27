@@ -6,10 +6,15 @@ import {
   Param,
   Put,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('menu')
 export class MenuController {
@@ -21,8 +26,23 @@ export class MenuController {
   }
 
   @Post()
-  create(@Body() createMenuDto: CreateMenuDto) {
-    return this.menuService.create(createMenuDto);
+  @UseInterceptors(
+    FileInterceptor('gambar', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          callback(null, uniqueName + extname(file.originalname));
+        },
+      }),
+    }),
+  )
+  create(@UploadedFile() file: Express.Multer.File, @Body() body: any) {
+    return this.menuService.create({
+      ...body,
+      harga: Number(body.harga),
+      gambar: file.filename,
+    });
   }
 
   @Get(':id')
