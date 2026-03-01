@@ -15,6 +15,8 @@ import { UpdateMenuDto } from './dto/update-menu.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-strategy/jwt-auth.guard';
 
 @Controller('menu')
 export class MenuController {
@@ -25,6 +27,12 @@ export class MenuController {
     return this.menuService.findAll();
   }
 
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return await this.menuService.findOne(+id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   @UseInterceptors(
     FileInterceptor('gambar', {
@@ -45,16 +53,13 @@ export class MenuController {
     });
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.menuService.findOne(+id);
-  }
-
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   update(@Param('id') id: string, @Body() updateMenuDto: UpdateMenuDto) {
     return this.menuService.update(+id, updateMenuDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.menuService.remove(+id);
