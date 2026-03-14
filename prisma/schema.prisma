@@ -29,3 +29,32 @@ model Admin {
   createdAt DateTime @default(now())
 }
 
+model KategoriProduk {
+  id        Int             @id @default(autoincrement())
+  nama      String          
+  
+  produk    KatalogProduk[] 
+}
+
+model KatalogProduk {
+  id             Int            @id @default(autoincrement())
+  nama           String
+  deskripsi      String
+  harga          Int
+  gambar         String?
+
+  kategoriId     Int
+  kategori       KategoriProduk @relation(fields: [kategoriId], references: [id])
+  
+  // Data pelengkap untuk tampilan React
+  bahan          String         
+  ulasan         Int            @default(0)
+  rating         Float          @default(0.0)
+  icon           String        
+  
+  badge          String?        
+  badgeColor     String?      
+  khasiat        String       
+
+  createdAt      DateTime       @default(now())
+}
