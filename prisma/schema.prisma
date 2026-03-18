@@ -45,8 +45,6 @@ model KatalogProduk {
 
   kategoriId     Int
   kategori       KategoriProduk @relation(fields: [kategoriId], references: [id])
-  
-  // Data pelengkap untuk tampilan React
   bahan          String         
   ulasan         Int            @default(0)
   rating         Float          @default(0.0)
